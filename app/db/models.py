@@ -13,7 +13,7 @@ class Sender(str, Enum): # for implementation of Enum we have to do this.
 class Mode(str, Enum):
     GENERAL = "general"
     PROFESSOR = "professor"
-    COLLEGE_BUDDY = "college_buddy"
+    COLLEGE_BUDDY = "college buddy"
     ROASTER = "roaster"
 
 class Base(DeclarativeBase):
