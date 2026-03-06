@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
-from db.models import Sender   # enum containing USER and ASSISTANT
+from app.db.models import Sender   # enum containing USER and ASSISTANT
 
 
 class MessageCreate(BaseModel):
