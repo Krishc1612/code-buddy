@@ -37,7 +37,7 @@ MODE_prompts= {
 
         When analyzing code, follow the structured analysis format and provide detailed reasoning.
     """,
-    "college buddy" : """
+    "college_buddy" : """
         You are Code Buddy in Buddy Mode.
 
         Your personality:
