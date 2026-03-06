@@ -1,12 +1,19 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from uuid import UUID
 from typing import Optional
 
 
 class UserCreate(BaseModel):
-    username: str        # username chosen by the user during registration
+    username : str = Field(
+        min_length = 3,
+        max_length = 20,
+        pattern = "^[a-zA-Z0-9_]+$"
+    )      # username chosen by the user during registration
     email: EmailStr      # validates that the email format is correct
-    password: str        # raw password sent by client (later hashed before saving)
+    password : str = Field(
+        min_length = 8,
+        max_length = 10
+    )        # raw password sent by client (later hashed before saving)
 
 
 class UserLogin(BaseModel):
@@ -26,5 +33,10 @@ class UserResponse(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None   # user can optionally update username
+    username: Optional[str] = Field(
+    default=None,
+    min_length=3,
+    max_length=20,
+    pattern="^[a-zA-Z0-9_]+$"
+)  # user can optionally update username
     email: Optional[EmailStr] = None # user can optionally update email
