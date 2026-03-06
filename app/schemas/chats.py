@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from db.models import Mode
+from app.db.models import Mode
 from uuid import uuid4, UUID
 from datetime import datetime
 

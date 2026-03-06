@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from db.models import Sender
+from app.db.models import Sender
 from uuid import UUID
 from datetime import datetime
 
