@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
 from typing import Optional
-from db.models import Mode   # enum containing GENERAL, PROFESSOR, COLLEGE_BUDDY, ROASTER
+from app.db.models import Mode   # enum containing GENERAL, PROFESSOR, COLLEGE_BUDDY, ROASTER
 
 
 class ChatCreate(BaseModel):
