@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from db.models import Mode
+from app.db.models import Mode
 from uuid import uuid4, UUID
 from datetime import datetime
 
@@ -20,7 +20,7 @@ class ChatRead(BaseModel):
     mode : Mode
     created_at : datetime # all of these would be needed when chat's metadata is needed.
 
-    model_config = {"from_attributes": True} # yet to know what this does
+    model_config = {"from_attributes": True}  
 
 class ChatUpdate(BaseModel):
     name : Optional[str] = None # client might just "unname" the chat to set it to default name.
