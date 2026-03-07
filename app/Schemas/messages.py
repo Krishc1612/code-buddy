@@ -6,7 +6,7 @@ from app.db.models import Sender   # enum containing USER and ASSISTANT
 
 class MessageCreate(BaseModel):
     content: str        # text message sent by the user
-    chat_id: UUID       # chat where the message belongs
+    # chat_id: UUID       # chat where the message belongs will be obtained from api routes instead of request bodies
 
     # client only sends these two fields
     # backend automatically adds sender and created_at
