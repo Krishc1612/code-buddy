@@ -39,4 +39,4 @@ class UserUpdate(BaseModel):
     max_length=20,
     pattern="^[a-zA-Z0-9_]+$"
 )  # user can optionally update username
-    email: Optional[EmailStr] = None # user can optionally update email
+    # email: Optional[EmailStr] = None # user should not update email. This is for app convenience. Changing email would be hectic at this stage.
