@@ -20,7 +20,7 @@ class ChatRead(BaseModel):
     mode : Mode
     created_at : datetime # all of these would be needed when chat's metadata is needed.
 
-    model_config = {"from_attributes": True}  
+    model_config = {"from_attributes": True}  # allow creating ChatRead from ORM objects or other attribute-based objects (Pydantic v2 equivalent of orm_mode)
 
 class ChatUpdate(BaseModel):
     name : Optional[str] = None # client might just "unname" the chat to set it to default name.
