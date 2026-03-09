@@ -1,14 +1,14 @@
-# from app.db.models import Mode
+from app.db.models import Mode
 # prompt_builder.py
 #Pushing to a branch
 
-from enum import Enum
+# from enum import Enum
 
-class Mode(str, Enum):
-    GENERAL = "general"
-    PROFESSOR = "professor"
-    COLLEGE_BUDDY = "college_buddy"
-    ROASTER = "roaster"
+# class Mode(str, Enum):
+#     GENERAL = "general"
+#     PROFESSOR = "professor"
+#     COLLEGE_BUDDY = "college_buddy"
+#     ROASTER = "roaster" this is the MODE class  defined in db.models
 
 # --- Base identity (shared across all modes) ---
 _BASE_IDENTITY = """
@@ -260,7 +260,3 @@ def get_system_message(mode: str) -> dict:
         "role": "system",
         "content": build_system_prompt(mode)
     }
-
-
-
-

@@ -13,7 +13,7 @@ def generate_response(request : List[Dict], sys_prompt : Dict) -> str:
     response = requests.post(
         url=os.getenv("LLM_URL"),
         headers={
-            "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+            "Authorization": f"Bearer {os.getenv('API_KEY')}",
             "Content-Type": "application/json"
         },
         json={
