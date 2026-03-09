@@ -75,6 +75,14 @@ def create_chat(db : Session, chat_name : str, mode : Mode, user_id : UUID):
 
     return db_chat
 
+def get_chat_by_ids(db : Session, chat_id : UUID, user_id : UUID):
+    db_chat = Chats(
+        chat_id = chat_id,
+        user_id = user_id
+    )
+
+    return db_chat
+
 def get_user_chats(db : Session, user_id : UUID):
     return (
         db.query(Chats)

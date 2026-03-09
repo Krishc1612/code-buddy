@@ -24,4 +24,4 @@ class ChatRead(BaseModel):
 
 class ChatUpdate(BaseModel):
     name : Optional[str] = None # client might just "unname" the chat to set it to default name.
-    mode : Optional[Mode] = None
+    # mode : Optional[Mode] = None parsing for current version, keeping it optional
