@@ -1,16 +1,15 @@
 from llm_client import generate_response
 from prompt_builder import get_system_message
 from response_parser import parse_response, format_for_terminal
-
-MODE = "college_buddy"
+#Pushing to a branch
+MODE = "roaster"
 sys_prompt = get_system_message(MODE)
 
 request = [
     {
         "role": "user",
         "content": """
-        what is sliding window.
-
+        Explain sliding window
         """
     }
 ]
