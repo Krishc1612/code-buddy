@@ -13,3 +13,5 @@ wheels/
 pyproject.toml
 uv.lock
 .env
+venv/
+.vscode/
