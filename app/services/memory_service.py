@@ -1,13 +1,16 @@
 import os
 from uuid import UUID
 from dotenv import load_dotenv
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession 
 from app.db.crud import get_last_messages
 
 load_dotenv()
 
-def get_chat_context(db: Session, chat_id: UUID):
-    orm_context = get_last_messages(
+async def get_chat_context(
+    db: AsyncSession, 
+    chat_id: UUID
+):
+    orm_context = await get_last_messages(
         db = db,
         chat_id = chat_id,
         n = int(os.getenv("CONTEXT_MESSAGE_LIMIT"))

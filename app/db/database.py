@@ -31,8 +31,6 @@ async def create_db_and_tables():
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_factory() as session:
         yield session
-# is this fine though?
-
 
 
 
