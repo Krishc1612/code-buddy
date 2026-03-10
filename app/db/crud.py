@@ -34,13 +34,14 @@ async def fetch_user_details( # 404 if None returned
     #     .first() # the first actually executes the query and here it would give the first row object corresponding to the model.
     # ) this is previous code, which was sync this should be commented out so as to not lose the comments made with it which cam be useful for future.
 
-    result = await db.execute(
-        select(Users.username, Users.email)
+    payload = await db.execute(
+        select(Users)
         .where(Users.id == user_id)
     )
 
-    return result.first()
+    user = payload.scalars().first()
 
+    return user
 async def get_user_by_email( # 404 if None returned
     db : AsyncSession, 
     email : str
@@ -55,7 +56,7 @@ async def get_user_by_email( # 404 if None returned
     # )
 
     payload = await db.execute(
-        select(Users.id, Users.password) # handler would also need the user id as an access token must be generated out of it.
+        select(Users) # handler would also need the user id as an access token must be generated out of it.
         .where(Users.email == email)
     )
     # Now there is an interesting way in which .execute returns.
@@ -70,7 +71,9 @@ async def get_user_by_email( # 404 if None returned
     # first() converts the 1st Result to just Row(User(...)). Now, to access column values we must do Row[0].columnName
     # first() converts the 2nd Result to just Row(id, password). Now, to access id column we can directly do, Row.id.
 
-    return payload.first() # above reason we used .first here. 
+    user = payload.scalars().first() # above reason we used .first here.
+
+    return user 
 
 async def update_user( # raising exception in services if None was returned 
     db : AsyncSession, 
