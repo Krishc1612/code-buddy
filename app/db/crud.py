@@ -272,7 +272,7 @@ async def get_last_messages(
     db_last_msgs = await db.execute(
         select(Messages)
         .where(Messages.chat_id == chat_id)
-        .order_by(Messages.created_at.desc())
+        .order_by(Messages.created_at)
         .limit(n)
     )
 
