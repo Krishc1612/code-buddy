@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,11 +20,16 @@ async def get_current_user(
         payload = decode_access_token(token)
         user_id = payload.get("user_id")
 
-    except JWTError: # the case when decode_access_token might fail (token is malicious)
+        if not user_id:
+            raise HTTPException(status_code = 401, detail = "Invalid token.")
+        
+        user_id = UUID(user_id)
+
+    except (JWTError, ValueError, TypeError): # the case when decode_access_token might fail (token is malicious) or UUID raises an exception about the user_id string being not a uuid type.
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired token"
-        )
+        ) 
 
     user = await fetch_user_details(db, user_id)
 
