@@ -13,10 +13,6 @@ from app.schemas.messages import MessageCreate
 from app.services.memory_service import get_chat_context
 from typing import List, Dict
 
-load_dotenv()
-
-CONTEXT_MESSAGE_LIMIT = int(os.getenv("CONTEXT_MESSAGE_LIMIT", 10))
-
 async def get_response(
     db : AsyncSession,
     content : MessageCreate, 
@@ -41,8 +37,7 @@ async def get_response(
 
     request_context = await get_chat_context(
         db = db,
-        chat_id = chat.id,
-        n = CONTEXT_MESSAGE_LIMIT
+        chat_id = chat.id
     )
 
     sys_prompt = get_system_message(chat.mode)
