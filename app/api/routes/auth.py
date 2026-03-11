@@ -8,7 +8,7 @@ from app.db.database import get_async_session
 from app.schemas.users import UserCreate, UserLogin, UserResponse
 
 router = APIRouter(
-    prefix = "/api/auth"
+    prefix = "/auth"
 )
 
 @router.post("/register")
@@ -39,10 +39,10 @@ async def register_user(
 async def login_user(
     user_info : UserLogin,
     db : AsyncSession = Depends(get_async_session)
-) -> UserResponse:
+):
     db_user = await get_user_by_email(
         db = db,
-        user_id = user_info.email
+        email = user_info.email
     )
 
     if not db_user:
@@ -57,7 +57,7 @@ async def login_user(
         raise HTTPException(status_code = 401, detail = "Invalid email or password")
     
     token = create_access_token(
-        { "user_id" : db_user.id }
+        { "user_id" : str(db_user.id) }
     )
 
     return {

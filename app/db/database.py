@@ -14,6 +14,8 @@ if not DATABASE_URL:
 class Base(DeclarativeBase):
     pass
 
+from app.db.models import *
+
 engine = create_async_engine(
     DATABASE_URL,
     echo = True
@@ -31,7 +33,3 @@ async def create_db_and_tables():
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_factory() as session:
         yield session
-
-
-
-
