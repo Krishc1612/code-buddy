@@ -1,11 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
 from app.db.models import Sender   # enum containing USER and ASSISTANT
 
 
 class MessageCreate(BaseModel):
-    content: str        # text message sent by the user
+    content: str = Field(
+        min_length = 2,
+        max_length = 400
+    )       # text message sent by the user
     # chat_id: UUID       # chat where the message belongs will be obtained from api routes instead of request bodies
 
     # client only sends these two fields
