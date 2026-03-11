@@ -1,7 +1,4 @@
-
-
-from sqlalchemy import Column, ForeignKey, String, DateTime, Text
-
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 # there are libraries that can detect the language of the piece of code.
@@ -42,7 +39,7 @@ class Users(Base):
     # email -> needs to be required.
     email : Mapped[str] = mapped_column(unique = True, nullable = False)
 
-    chats : Mapped[list["Chats"]] = relationship(back_populates = "user")
+    chats : Mapped[list["Chats"]] = relationship(back_populates = "user", cascade = "all, delete-orphan")
     # the above statement is not database level but python level that is it establishes relation 
     # between Chats object and Users object.
 
@@ -58,11 +55,11 @@ class Chats(Base):
     # created_at --> to sort based on latest chats
     created_at : Mapped[datetime] = mapped_column(default = datetime.utcnow)
     # user_id --> foreign key, a relation to map with users table
-    user_id : Mapped[UUID] = mapped_column(ForeignKey("users.id"))
+    user_id : Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete = "CASCADE"))
 
     # relations
     user : Mapped["Users"] = relationship(back_populates = "chats")
-    messages : Mapped[list["Messages"]] = relationship(back_populates = "chat")
+    messages : Mapped[list["Messages"]] = relationship(back_populates = "chat", cascade = "all, delete-orphan")
 
 class Messages(Base):
     __tablename__ = "messages" # convention to name the table as a singular
@@ -76,7 +73,7 @@ class Messages(Base):
     # created_at --> message creation details 
     created_at : Mapped[datetime] = mapped_column(default = datetime.utcnow)
     # chat_id --> foreign key, a relation to map with chats table.
-    chat_id : Mapped[UUID] = mapped_column(ForeignKey("chats.id"))
+    chat_id : Mapped[UUID] = mapped_column(ForeignKey("chats.id", ondelete = "CASCADE"))
 
     #relations
     chat : Mapped["Chats"] = relationship(back_populates = "messages")
