@@ -3,12 +3,13 @@ from uuid import UUID
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession 
 from app.db.crud import get_last_messages
+from app.db.models import Mode
 
 load_dotenv()
 
 async def get_chat_context(
     db: AsyncSession, 
-    chat_id: UUID
+    chat_id: UUID,
 ):
     orm_context = await get_last_messages(
         db = db,
@@ -17,7 +18,7 @@ async def get_chat_context(
     )
 
     chat_context = [
-        {"role": m.role, "content": m.content}
+        {"role": m.sender, "content": m.content}
         for m in orm_context
     ]
 
