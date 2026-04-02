@@ -9,9 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-.python-version
-pyproject.toml
-uv.lock
 .env
 venv/
 .vscode/
