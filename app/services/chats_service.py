@@ -1,7 +1,7 @@
-import os
 from uuid import UUID
 from dotenv import load_dotenv
 from fastapi import HTTPException
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.llm_client import generate_response
 from app.core.prompt_builder import get_system_message
@@ -9,8 +9,9 @@ from app.core.response_parser import ParsedResponse, parse_response
 from app.db.crud import create_chat, create_message, delete_chat, get_chat_by_ids, get_chat_messages, get_user_chats, update_chat
 from app.db.models import Sender
 from app.schemas.chats import ChatCreate, ChatRead, ChatUpdate
-from app.schemas.messages import MessageCreate
+from app.schemas.messages import MessageCreate, MessageResponse
 from app.services.memory_service import get_chat_context
+from app.rag_chat.ingest import ingest_chunk
 from typing import List, Dict
 
 async def get_response(
@@ -28,7 +29,7 @@ async def get_response(
     if not chat:
         raise HTTPException(status_code = 404, detail = f"Chat not found for user {user_id}")
     
-    await create_message(
+    user_msg = await create_message(
         db = db,
         chat_id = chat.id,
         content = content.content,
@@ -37,7 +38,8 @@ async def get_response(
 
     request_context = await get_chat_context(
         db = db,
-        chat_id = chat.id
+        chat_id = chat.id,
+        query = content.content
     )
 
     sys_prompt = get_system_message(chat.mode)
@@ -47,11 +49,19 @@ async def get_response(
         sys_prompt = sys_prompt
     )
 
-    await create_message(
+    assistant_msg = await create_message(
         db = db,
         chat_id = chat.id,
         content = response,
         sender = Sender.ASSISTANT
+    )
+
+
+    await run_in_threadpool(
+        ingest_chunk,
+        MessageResponse.model_validate(user_msg),
+        MessageResponse.model_validate(assistant_msg),
+        str(chat.id)
     )
 
     return parse_response(response, mode = chat.mode)
