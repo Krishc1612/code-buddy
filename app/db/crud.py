@@ -32,7 +32,7 @@ async def fetch_user_details( # 404 if None returned
     #     db.query(Users.username, Users.email) # if we query whole table it returns ORM object with all columns as attributes but if we mention specific attributes, it would only return those
     #     .filter(Users.id == user_id) # basically where clause
     #     .first() # the first actually executes the query and here it would give the first row object corresponding to the model.
-    # ) this is previous code, which was sync this should be commented out so as to not lose the comments made with it which cam be useful for future.
+    # ) this is previous code, which was sync this should be commented out so as to not lose the comments made with it which can be useful for future.
 
     payload = await db.execute(
         select(Users)
@@ -257,7 +257,7 @@ async def get_chat_messages(
     db_msgs = await db.execute(
         select(Messages)
         .where(Messages.chat_id == chat_id)
-        .order_by(Messages.created_at.desc())
+        .order_by(Messages.created_at)
     )
 
     msgs = db_msgs.scalars().all()
@@ -265,17 +265,48 @@ async def get_chat_messages(
     return msgs
 
 async def get_last_messages(
-    db : AsyncSession, 
-    chat_id : UUID, 
-    n : int
+    db: AsyncSession, 
+    chat_id: UUID, 
+    n: int
 ):
-    db_last_msgs = await db.execute(
-        select(Messages)
+    subq = (
+        select(Messages.id)
         .where(Messages.chat_id == chat_id)
-        .order_by(Messages.created_at)
+        .order_by(Messages.created_at.desc())
         .limit(n)
-    )
+    ).subquery() 
+    # this is a subquery similar to that of SQL subqueries. 
+    # We needed it because first the messages needed to be selected 
+    # in new to old manner i.e, desc but, LLM expects old to new context 
+    # hence we again sort it in ascending order.
+
+    query = (
+        select(Messages)
+        .where(Messages.id.in_(select(subq.c.id)))
+        .order_by(Messages.created_at)
+    ) 
+    # .select generates SQL queries to be executed and here we map back 
+    # the selected ids to actual ORM Message objects and sort them in ascending order
+
+    db_last_msgs = await db.execute(query) 
+    # actually executing above queries
 
     last_msgs = db_last_msgs.scalars().all()
+    # extracting ORM Message objects from result
 
     return last_msgs
+
+async def get_msg_by_id(
+    db : AsyncSession,
+    msg_id : UUID
+) :
+    query = (
+        select(Messages)
+        .where(Messages.id == msg_id)
+    )
+
+    result = await db.execute(query)
+
+    msg = result.scalars().first()
+
+    return msg
