@@ -18,7 +18,8 @@ from app.db.models import *
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo = True
+    echo = True,
+    connect_args = {"statement_cache_size" : 0}
 )
 
 async_session_factory = async_sessionmaker(
