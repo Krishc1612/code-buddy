@@ -95,6 +95,10 @@ show the code ONLY here at the end. Fix ONLY what is broken. Do not add:
 - Extra validation beyond what the bug requires
 The fix should be minimal — change only what is wrong, 
 keep everything else exactly as the user wrote it.
+You MUST provide it in a single markdown fenced code block with an explicit language tag.
+Correct format example: ```python ... ``` or ```cpp ... ``` (never use untagged ``` blocks).
+The language tag MUST match the user's programming language.
+Have proper line separation and leave comments where the correction was done.
 >
 
 IMPORTANT: Every section must have real content. Never leave a section as a one-liner placeholder.
@@ -231,7 +235,7 @@ All code goes exclusively in the Improved Code section.
 _MODE_FORMAT = {
     Mode.GENERAL: _STRICT_FORMAT,
     Mode.PROFESSOR: _STRICT_FORMAT,
-    Mode.COLLEGE_BUDDY: _RELAXED_FORMAT,  # headers feel stiff for this mode
+    Mode.COLLEGE_BUDDY: _STRICT_FORMAT,  # headers feel stiff for this mode
     Mode.ROASTER: _STRICT_FORMAT,
 }
 

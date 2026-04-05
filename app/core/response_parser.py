@@ -154,6 +154,32 @@ def _extract_code_block(text: str) -> tuple[Optional[str], Optional[str]]:
     return None, None
 
 
+def _infer_language_from_code(code: str) -> str:
+    """Best-effort language inference when model misses the fence tag."""
+    low = code.lower()
+
+    if "#include" in code or "std::" in code or "using namespace std" in code:
+        return "cpp"
+    if "public static void main" in code or "system.out.println" in code:
+        return "java"
+    if "def " in code or "import " in code or "print(" in code:
+        return "python"
+    if "function " in code or "console.log(" in code:
+        return "javascript"
+    if "fmt.println(" in code or "func main()" in code:
+        return "go"
+    if "using " in code and "namespace" in code:
+        return "csharp"
+
+    return "text"
+
+
+def _to_fenced_code_block(code: str, language: Optional[str]) -> str:
+    """Always return code in a strict markdown fenced block with language."""
+    lang = (language or "").strip().lower() or _infer_language_from_code(code)
+    return f"```{lang}\n{code.strip()}\n```"
+
+
 # ============================================================
 # SECTION 4: TEACHING MODE DETECTOR
 # ============================================================
@@ -226,18 +252,13 @@ def parse_response(raw: str, mode: str) -> ParsedResponse:
     learning_recs     = _extract_section(raw, "Learning Recommendations")
     improved_code_raw = _extract_section(raw, "Improved Code")
 
-    # For improved code — extract just the raw code
-    # from inside the markdown code block
-    improved_code_raw = _extract_section(raw, "Improved Code")
     improved_code = None
     if improved_code_raw:
-       _, improved_code = _extract_code_block(improved_code_raw)
-    if not improved_code:
-        improved_code = improved_code_raw
-        # if no code block found, use the whole section text
-        # handles edge case where model forgets the fences
-        if not improved_code:
-            improved_code = improved_code_raw
+        language, extracted_code = _extract_code_block(improved_code_raw)
+        if extracted_code:
+            improved_code = _to_fenced_code_block(extracted_code, language)
+        else:
+            improved_code = _to_fenced_code_block(improved_code_raw, None)
 
     return ParsedResponse(
         bug_analysis=bug_analysis,
