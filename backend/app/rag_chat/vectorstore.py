@@ -1,6 +1,12 @@
 from langchain_community.vectorstores import Chroma
 from app.rag_chat.embeddings import get_embeddings
+from dotenv import load_dotenv
+import os
 # from langchain.schema import Document
+
+load_dotenv()
+
+CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "chroma_db")
 
 _vectorstore = None
 
@@ -12,7 +18,7 @@ def get_vectorstore():
         _vectorstore = Chroma(
             collection_name = "chat_context",
             embedding_function= get_embeddings(),
-            persist_directory = "./chroma_db"
+            persist_directory = CHROMA_DB_PATH
         )
 
     return _vectorstore

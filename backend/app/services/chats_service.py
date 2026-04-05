@@ -44,28 +44,38 @@ async def get_response(
 
     sys_prompt = get_system_message(chat.mode)
 
-    response = generate_response(
-        request = request_context, 
-        sys_prompt = sys_prompt
-    )
+    try :
+        response = generate_response(
+            request = request_context, 
+            sys_prompt = sys_prompt
+        )
 
-    assistant_msg = await create_message(
-        db = db,
-        chat_id = chat.id,
-        content = response,
-        sender = Sender.ASSISTANT
-    )
+        assistant_msg = await create_message(
+            db = db,
+            chat_id = chat.id,
+            content = response,
+            sender = Sender.ASSISTANT
+        )
 
 
-    await run_in_threadpool(
-        ingest_chunk,
-        MessageResponse.model_validate(user_msg),
-        MessageResponse.model_validate(assistant_msg),
-        str(chat.id)
-    )
+        await run_in_threadpool(
+            ingest_chunk,
+            MessageResponse.model_validate(user_msg),
+            MessageResponse.model_validate(assistant_msg),
+            str(chat.id)
+        )
 
-    return parse_response(response, mode = chat.mode)
-# still not returning response metadata here, we might need it when we actually show time-stamps for each message. This function simply returns ParsedResponse to the handler.
+        return parse_response(response, mode = chat.mode)
+    # still not returning response metadata here, we might need it when we actually show time-stamps for each message. This function simply returns ParsedResponse to the handler.
+    except KeyError:
+        assistant_msg = await create_message(
+            db = db,
+            chat_id = chat.id,
+            content = "⚠️ I'm currently unavailable due to high load. Please try again.",
+            sender = Sender.ASSISTANT
+        )
+
+        return assistant_msg.content
 
 async def make_chat( # there won't be any get_current_user dependency injection here.
     db : AsyncSession,

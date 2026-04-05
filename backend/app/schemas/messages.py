@@ -7,7 +7,7 @@ from app.db.models import Sender   # enum containing USER and ASSISTANT
 class MessageCreate(BaseModel):
     content: str = Field(
         min_length = 2,
-        max_length = 2000
+        max_length = 20000
     )       # text message sent by the user
     # chat_id: UUID       # chat where the message belongs will be obtained from api routes instead of request bodies
 
