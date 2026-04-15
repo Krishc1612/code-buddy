@@ -13,25 +13,25 @@ PORT = int(os.getenv("PORT", 2000))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("🚀 Starting Code-Buddy backend...")
+    print("############## Starting Code-Buddy backend ####################")
 
     try:
         await create_db_and_tables()
-        print("✅ Database initialized")
+        print("\n################### Database initialized ######################\n")
 
         app.state.embedding_model = get_embeddings()
-        print("✅ Embedding model loaded")
+        print("\n######################### Embedding model loaded #######################\n")
 
         app.state.vectorstore = get_vectorstore()
-        print("✅ Vectorstore loaded")
+        print("\n######################### Vectorstore loaded ############################\n")
 
     except Exception as e:
-        print("❌ Critical startup failure:", e)
+        print("Critical startup failure:", e)
         raise RuntimeError("Startup failed")
 
     yield
 
-    print("🛑 Shutting down...")
+    print("\n######################### Shutting down... ############################\n")
 
 
 app = FastAPI(
